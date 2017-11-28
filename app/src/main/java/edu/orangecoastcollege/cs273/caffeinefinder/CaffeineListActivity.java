@@ -166,7 +166,7 @@ public class CaffeineListActivity extends AppCompatActivity implements OnMapRead
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);\
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             mLastLocation = new Location("");
@@ -192,5 +192,39 @@ public class CaffeineListActivity extends AppCompatActivity implements OnMapRead
     @Override
     public void onLocationChanged(Location location) {
         handleNewLocation(location);
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+
+    }
+
+    public void findClosestCaffeine(View view) {
+        double minDistance = Double.MAX_VALUE;
+        CaffeineLocation closestLocation = null;
+        double distance;
+        Location temp = new Location("");
+
+        for (CaffeineLocation caffeineLocation : mAllCaffeineLocationsList) {
+            temp.setLongitude(caffeineLocation.getLongitude());
+            temp.setLatitude(caffeineLocation.getLatitude());
+            distance = temp.distanceTo(mLastLocation);
+            if(distance < minDistance) {
+                minDistance = distance;
+                closestLocation = caffeineLocation;
+            }
+        }
+        startActivity(new Intent(this, CaffeineDetailsActivity.class)
+                .putExtra("caffeine", closestLocation).putExtra("lastLocation", mLastLocation));
     }
 }
