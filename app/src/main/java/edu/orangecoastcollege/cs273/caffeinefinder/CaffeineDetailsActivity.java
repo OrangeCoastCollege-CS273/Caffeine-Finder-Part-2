@@ -1,5 +1,6 @@
 package edu.orangecoastcollege.cs273.caffeinefinder;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
@@ -18,6 +19,7 @@ public class CaffeineDetailsActivity extends AppCompatActivity implements OnMapR
     private GoogleMap mMap;
     private CaffeineLocation mSelectedCaffeineLocation;
     //TODO: Add member variable for Location mMyLocation;
+    Location mLastLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,7 @@ public class CaffeineDetailsActivity extends AppCompatActivity implements OnMapR
         positionTextView.setText(mSelectedCaffeineLocation.getFormattedLatLng());
 
         //TODO: Get the parcelable MyLocation from the intent and assign it to the member variable mMyLocation
+        mLastLocation = getIntent().getParcelableExtra("lastLocation");
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.caffeineDetailsMapFragment);
@@ -49,10 +52,12 @@ public class CaffeineDetailsActivity extends AppCompatActivity implements OnMapR
         mMap.addMarker(new MarkerOptions().position(coordinate).title(mSelectedCaffeineLocation.getName()));
 
         //TODO: Add another LatLng coordinate named myCoordinate based off mMyLocation.
+        LatLng lastCoordinate = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
         //TODO: Add a custom marker at myCoordinate
+        mMap.addMarker(new MarkerOptions().position(lastCoordinate).title("Current Location"));
         //TODO: Move the camera position to target myCoordinate
 
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(coordinate).zoom(18.0f).build();
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(lastCoordinate).zoom(18.0f).build();
         CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
         mMap.moveCamera(cameraUpdate);
     }
